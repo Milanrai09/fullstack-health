@@ -1,0 +1,41 @@
+# Node.js specific
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Editor config files
+.DS_Store
+.editorconfig
+.vscode/
+
+# IDE-specific files
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.userprefs
+*.csproj
+*.sln.dot
+*.suo.dot
+
+# Build output and cache
+dist/
+build/
+coverage/
+node_modules/.cache/
+.pnp.js
+
+# TypeScript specific
+*.tsbuildinfo
+
+# IDE-specific files
+*.swp
+*.bak
+*.tmp
+*.log
+*.sync
+*.hprof
+*.old
+*.orig
+*.rej
+*.ipynb_checkpoints/
