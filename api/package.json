@@ -136,9 +136,7 @@
   },
   "scripts": {
  "build": "tsc",
-    "start": "node dist/index.js",
-    "start:ts": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "node index.ts",
     "vercel-build": "npm run vercel-install && npm run build",
     "vercel-install": "npm install --omit=optional && npm uninstall fsevents && npm install --no-optional --no-package-lock"
 
