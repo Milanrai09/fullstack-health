@@ -128,7 +128,6 @@
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.6",
     "google-auth-library": "^9.14.0",
-    // Add the missing dependencies here
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^8.8.1",
     "eslint-plugin-prettier": "^4.2.2",
