@@ -130,7 +130,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.ts",
+    "start": "node index.ts",
         "vercel-install": "npm install --omit=optional && npm uninstall fsevents && npm install --no-optional --no-package-lock"
 
 
