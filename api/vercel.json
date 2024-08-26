@@ -4,10 +4,8 @@
   "builds": [
     {
       "src": "index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "installCommand": "npm run vercel-install",
-                "installCommand": "npm install --omit=optional"
+      "use": "@vercel/node"
+
 
       }
     }
