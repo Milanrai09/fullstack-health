@@ -42,7 +42,6 @@
     "finalhandler": "^1.2.0",
     "forwarded": "^0.2.0",
     "fresh": "^0.5.2",
-    "fsevents": "^2.3.3",
     "function-bind": "^1.1.2",
     "get-intrinsic": "^1.2.4",
     "glob-parent": "^5.1.2",
@@ -118,6 +117,10 @@
       "nodemon": "^3.1.4"
 
   },
+  
+  "optionalDependencies": {
+  "fsevents": "^2.3.3"
+},
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
