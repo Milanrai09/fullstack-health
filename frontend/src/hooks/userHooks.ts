@@ -42,6 +42,7 @@ interface GoogleRegisterResponse {
 }
 
 const BASE_URL = `https://fullstack-health-backend.vercel.app/`
+
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
 export const useGetAllUsers = async (): Promise<UserInfo[]> => {
@@ -139,5 +140,3 @@ export const useGoogleRegisterMutation = () => {
     },
   });
 };
-
-
