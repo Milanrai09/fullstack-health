@@ -10,6 +10,7 @@ interface Article {
 }
 
 const BASE_URL = `https://fullstack-health-backend.vercel.app/`
+
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
 // Add request interceptor
@@ -150,4 +151,3 @@ export const deleteArticle = async (articleId: string): Promise<ApiResponse<{ me
     return { data: null, error: 'Error deleting article' };
   }
 };
-
