@@ -116,12 +116,15 @@
     "undici-types": "^6.19.8",
     "unpipe": "^1.0.0",
     "utils-merge": "^1.0.1",
-    "vary": "^1.1.2"
+    "vary": "^1.1.2",
+    "bcryptjs": "^2.4.3"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+"@types/bcryptjs": "^2.4.6",
     "@types/node-fetch": "^2.6.7",
     "@types/mongoose": "^5.11.97",
     "@types/bcrypt": "^5.0.2",
