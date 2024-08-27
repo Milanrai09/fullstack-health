@@ -9,7 +9,7 @@ interface Article {
   _id: string;
 }
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const BASE_URL = `https://fullstack-health-backend.vercel.app/`
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
 // Add request interceptor
