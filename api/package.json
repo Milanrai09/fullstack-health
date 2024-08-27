@@ -129,7 +129,6 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.6",
-    "google-auth-library": "^9.14.0"
   }, 
   "scripts": {
     "start":" nodemon index.ts",
