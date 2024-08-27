@@ -18,6 +18,7 @@ interface Article {
 }
 
 const BASE_URL = `https://fullstack-health-backend.vercel.app/`
+
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
 api.interceptors.request.use((config) => {
