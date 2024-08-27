@@ -5,7 +5,7 @@ interface Message {
   }
   export const fetchChatGPTResponse = async (messages: Message[]): Promise<string> => {
     try {
-      const response = await fetch(`${https://fullstack-health-backend.vercel.app}/api/chat`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
