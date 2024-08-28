@@ -49,7 +49,7 @@ export function setupMiddleware(app: Application): void {
 
   // CORS configuration
   const corsConfig: CorsConfig = {
-    origin: 'https://ecommerce-fullstack-frontend-theta.vercel.app/',
+    origin: 'https://fullstack-health-440azqaaf-milanrai09s-projects.vercel.app/',
     credentials: true, // Allow cookies for authenticated requests
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   };
