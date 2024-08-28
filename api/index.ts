@@ -58,8 +58,6 @@ export function setupMiddleware(app: Application): void {
 
 
 
-
-
 app.use(express.json());
 app.use(cookieParser());
 
