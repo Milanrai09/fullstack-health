@@ -31,6 +31,32 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // 
 
 
+interface CorsConfig {
+  origin: string;
+  credentials: boolean;
+  methods: string[];
+}
+
+// Middleware setup
+export function setupMiddleware(app: Application): void {
+  app.use(cookieParser());
+
+  // Use only for JSON parsing
+  app.use(bodyParser.json());
+
+  // Only if required for form data
+  app.use(bodyParser.urlencoded({ extended: true }));
+
+  // CORS configuration
+  const corsConfig: CorsConfig = {
+    origin: 'https://ecommerce-fullstack-frontend-theta.vercel.app/',
+    credentials: true, // Allow cookies for authenticated requests
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  };
+  app.use(cors(corsConfig)); // Apply CORS globally
+}
+
+
 
 
 
