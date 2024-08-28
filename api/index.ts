@@ -1,6 +1,6 @@
 require('dotenv').config();
 // src/server.ts
-import express, { response } from 'express';
+import express, { response,Application } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { fetchChatGPTResponse } from './openaiService';
