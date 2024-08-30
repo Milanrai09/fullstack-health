@@ -51,6 +51,7 @@ app.use(express.urlencoded({ extended: true })); //
 
   // Use only for JSON parsing
   app.use(bodyParser.json());
+app.use(express.json()); // Parse JSON request bodies
 
   // Only if required for form data
   app.use(bodyParser.urlencoded({ extended: true }));
