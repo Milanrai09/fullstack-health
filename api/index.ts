@@ -166,57 +166,6 @@ app.get('/testing',(req, res) => {
 
 
 
-
-app.get('/api/nutrition', async (req: Request, res: Response) => {
-  const apiKey = process.env.NUTRITION_KEY;
-  const foodQuery = req.query.food as string;
-  if (!foodQuery) {
-    return res.status(400).json({ error: 'Food query parameter is required' });
-  }
-                  
-    const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(foodQuery)}`;
-
-    try {
-      console.log(`Fetching from search URL: ${searchUrl}`);
-      // First fetch: Search for foods matching the query
-      const response = await fetch(searchUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data from search endpoint, status: ${response.status}`);
-      }
-      const data = await response.json() as { foods?: FoodDetails[] }; // Type assertion or explicit typing
-      
-      console.log('Search response data:', data);
-      
-      if (data.foods && data.foods.length > 0) {
-        // Extract the first food item from the search results
-        const firstFood = data.foods[0];
-    const fdcId = firstFood.fdcId;
-
-    const detailsUrl = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}`;
-    console.log(`Fetching from details URL: ${detailsUrl}`);
-    // Second fetch: Get detailed information for the specific food item
-    const detailsResponse = await fetch(detailsUrl);
-    if (!detailsResponse.ok) {
-      throw new Error(`Failed to fetch food details from details endpoint, status: ${detailsResponse.status}`);
-    }
-    const foodDetails = await detailsResponse.json() as FoodDetails; // Type assertion or explicit typing
-    console.log('Food details response data:', foodDetails);
-    
-    // Respond with the detailed nutritional information
-    res.json(foodDetails);
-  } else {
-    // No food items found
-    res.status(404).json({ error: 'No food data found' });
-  }
-} catch (error) {
-    // Handle errors
-    console.error('Error fetching data:', (error as Error).message); // Type assertion for error
-    res.status(500).json({ error: 'Error fetching data', details: (error as Error).message });
-  }
-});
-
-
-
 app.post('/api/users/register', async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
