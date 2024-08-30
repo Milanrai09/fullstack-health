@@ -80,6 +80,9 @@ interface FoodDetails {
 app.get('/',(req, res) => {
     res.send('hello world')
 });
+app.get('/testing',(req, res) => {
+    res.send('hello world')
+});
 
 
   app.post('/api/user/google-signup', async (req: Request, res: Response) => {
