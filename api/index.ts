@@ -37,7 +37,14 @@ interface CorsConfig {
   methods: string[];
 }
 
-// Middleware setup
+const corsOptions = {
+    credentials: true,
+    origin: ['https://fullstack-health.vercel.app'] 
+};
+
+app.use(cors(corsOptions)); 
+
+
 
   app.use(cookieParser());
 
