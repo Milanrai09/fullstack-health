@@ -31,20 +31,20 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // 
 
 
-interface CorsConfig {
-  origin: string;
-  credentials: boolean;
-  methods: string[];
-}
+// interface CorsConfig {
+//   origin: string;
+//   credentials: boolean;
+//   methods: string[];
+// }
 
-const corsOptions = {
-    credentials: true,
-   origin:'*'
-};
+// const corsOptions = {
+//     credentials: true,
+//    origin:'*'
+// };
+
+// app.use(cors(corsOptions)); 
+
     // origin: ['https://fullstack-health.vercel.app'] 
-
-app.use(cors(corsOptions)); 
-
 
 
   app.use(cookieParser());
