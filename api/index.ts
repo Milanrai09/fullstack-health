@@ -38,7 +38,7 @@ interface CorsConfig {
 }
 
 // Middleware setup
-export function setupMiddleware(app: Application): void {
+
   app.use(cookieParser());
 
   // Use only for JSON parsing
@@ -48,13 +48,7 @@ export function setupMiddleware(app: Application): void {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   // CORS configuration
-  const corsConfig: CorsConfig = {
-    origin: 'https://fullstack-health-440azqaaf-milanrai09s-projects.vercel.app/',
-    credentials: true, // Allow cookies for authenticated requests
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  };
-  app.use(cors(corsConfig)); // Apply CORS globally
-}
+
 
 
 
