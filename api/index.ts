@@ -78,7 +78,7 @@ interface FoodDetails {
            
                 
 app.get('/',(req, res) => {
-    res.send('hello world')
+    res.send('hello world and hope this triggered')
 });
 app.get('/testing',(req, res) => {
     res.send('hello world')
