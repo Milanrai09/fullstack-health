@@ -39,8 +39,9 @@ interface CorsConfig {
 
 const corsOptions = {
     credentials: true,
-    origin: ['https://fullstack-health.vercel.app'] 
+   origin:'*'
 };
+    // origin: ['https://fullstack-health.vercel.app'] 
 
 app.use(cors(corsOptions)); 
 
