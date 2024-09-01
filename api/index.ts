@@ -40,15 +40,7 @@ const secretkey = process.env.JWT_SECRET
 
 dbConnect().catch(console.error);
 
-app.get('/example', async (req, res) => {
-  try {
-    await dbConnect();
-    res.json({ success: true, data: "Your data here" });
-  } catch (error) {
-    console.error('Database operation error:', error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
-  }
-});
+
 console.log(port)
 interface FoodDetails {
     fdcId: number; // Example, adjust the type according to your API response
@@ -58,10 +50,7 @@ interface FoodDetails {
   }
 
   
-                
-app.get('/testing',(req,res) => {
-    res.send('hello world')
-})
+
 
 console.log(port)
 interface FoodDetails {
@@ -72,8 +61,15 @@ interface FoodDetails {
   }
            
                 
-app.get('/',(req, res) => {
-    res.send('hello world and hope this triggered')
+app.get('/',async(req, res) => {
+     try {
+    await dbConnect();
+    res.json({ success: true, data: "Your data here" });
+       res.send('hello world')
+  } catch (error) {
+    console.error('Database operation error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
 });
 
 
