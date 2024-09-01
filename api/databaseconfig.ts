@@ -1,21 +1,69 @@
+
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-const mongodbConnection = async () => {
-    try {
-        const password = process.env.MONGODB_PASSWORD;
-        const dbName = 'healthApp'; // or process.env.DB_NAME if you prefer to use an environment variable
-        
-        const uri = `mongodb+srv://memilanrai19:${password}@cluster1.tne8i.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster1`;
-        
-        await mongoose.connect(uri);
-        console.log('Connected to MongoDB health database');
-    } catch (error) {
-        console.error('Error connecting to database:', (error as Error).message);
-    }
+if (!process.env.MONGODB_URI) {
+  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
 }
 
-export default mongodbConnection;
+const uri = process.env.MONGODB_URI;
 
+interface Cached {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+let cached: Cached = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+async function dbConnect() {
+  if (cached.conn) {
+    console.log("Using cached connection");
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    console.log("Creating new connection");
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
+      console.log("MongoDB connected successfully");
+      return mongoose;
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error("MongoDB connection error:", e);
+    throw e;
+  }
+
+  return cached.conn;
+}
+
+export function getConnectionStatus(): string {
+  if (!cached.conn) {
+    return "Not connected";
+  }
+  return mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+}
+
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connected to db');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose connection is disconnected');
+});
+
+export default dbConnect;
