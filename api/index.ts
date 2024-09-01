@@ -10,7 +10,7 @@ const port = process.env.PORT
 app.use(bodyParser.json());
 app.use(cors());
 import { Request, Response } from 'express';
-import dbConnect from './databaseconfig';
+import {dbConnect} from './databaseconfig';
 import User from './src/model/userModal';
 import Articles from './src/model/articleModel'
 import bcrypt from 'bcrypt';
