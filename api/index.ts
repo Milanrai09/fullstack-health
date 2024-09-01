@@ -1,16 +1,14 @@
 require('dotenv').config();
 // src/server.ts
-import express, { response,Application } from 'express';
+import express, { response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { fetchChatGPTResponse } from './openaiService';
 import fetch from 'node-fetch';
 const app = express();
 const port = process.env.PORT
-app.use(bodyParser.json());
-app.use(cors());
 import { Request, Response } from 'express';
-import {dbConnect} from './databaseconfig';
+import dbConnect from './databaseconfig';
 import User from './src/model/userModal';
 import Articles from './src/model/articleModel'
 import bcrypt from 'bcrypt';
@@ -30,43 +28,44 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // 
 
-
-// interface CorsConfig {
-//   origin: string;
-//   credentials: boolean;
-//   methods: string[];
-// }
-
-// const corsOptions = {
-//     credentials: true,
-//    origin:'*'
-// };
-
-// app.use(cors(corsOptions)); 
-
-    // origin: ['https://fullstack-health.vercel.app'] 
+app.use(bodyParser.json());
 
 
-  app.use(cookieParser());
-
-  // Use only for JSON parsing
-  app.use(bodyParser.json());
-app.use(express.json()); // Parse JSON request bodies
-
-  // Only if required for form data
-  app.use(bodyParser.urlencoded({ extended: true }));
-
-  // CORS configuration
-
-
-
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
 
 const secretkey = process.env.JWT_SECRET
 
-dbConnect();
+dbConnect().catch(console.error);
+
+app.get('/example', async (req, res) => {
+  try {
+    await dbConnect();
+    // Your database query here
+    res.json({ success: true, data: "Your data here" });
+  } catch (error) {
+    console.error('Database operation error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+console.log(port)
+// Define the shape of your food details data
+interface FoodDetails {
+    fdcId: number; // Example, adjust the type according to your API response
+    name: string;
+    calories: number;
+    
+    // Add more fields as per your API response
+  }
+
+  
+                
+app.get('/testing',(req,res) => {
+    res.send('hello world')
+})
+
 console.log(port)
 // Define the shape of your food details data
 interface FoodDetails {
