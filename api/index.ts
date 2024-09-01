@@ -43,7 +43,6 @@ dbConnect().catch(console.error);
 app.get('/example', async (req, res) => {
   try {
     await dbConnect();
-    // Your database query here
     res.json({ success: true, data: "Your data here" });
   } catch (error) {
     console.error('Database operation error:', error);
@@ -51,13 +50,11 @@ app.get('/example', async (req, res) => {
   }
 });
 console.log(port)
-// Define the shape of your food details data
 interface FoodDetails {
     fdcId: number; // Example, adjust the type according to your API response
     name: string;
     calories: number;
     
-    // Add more fields as per your API response
   }
 
   
@@ -67,13 +64,11 @@ app.get('/testing',(req,res) => {
 })
 
 console.log(port)
-// Define the shape of your food details data
 interface FoodDetails {
-    fdcId: number; // Example, adjust the type according to your API response
+    fdcId: number; 
     name: string;
     calories: number;
     
-    // Add more fields as per your API response
   }
            
                 
@@ -99,11 +94,9 @@ app.get('/',(req, res) => {
   
       const { sub: googleId, email, name, picture } = payload;
   
-      // Check if user already exists
       let user = await User.findOne({ $or: [{ googleId }, { email }] });
   
       if (user) {
-        // If user exists but doesn't have a googleId, update it
         if (!user.googleId) {
           user.googleId = googleId;
           user.authProvider = 'google';
@@ -115,7 +108,6 @@ app.get('/',(req, res) => {
           return res.status(409).json({message:'user already exist'})
         }
       } else {
-        // Create new user
         user = new User({
           name,
           email,
@@ -132,7 +124,6 @@ app.get('/',(req, res) => {
         throw new Error('JWT_SECRET is not defined in environment variables');
       }
   
-      // Generate JWT token
       const jwtToken = jwt.sign(
         { 
           userId: user._id, 
@@ -150,7 +141,6 @@ app.get('/',(req, res) => {
         token: jwtToken,
       };
   
-      // Set token as HTTP cookie
       res.cookie('token', jwtToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   
       return res.status(200).json({ message: 'Google sign-up successful', userData });
@@ -167,7 +157,6 @@ app.get('/',(req, res) => {
 app.post('/api/users/register', async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
-    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already in use:', email);
@@ -178,13 +167,12 @@ app.post('/api/users/register', async (req: Request, res: Response) => {
     const newUser = new User({
       name,
       email,
-      password,  // The password will be hashed in the pre-save hook
+      password,  
       isAdmin: true,
       isSuperAdmin: true,
-      authProvider: 'local',  // Set the auth provider to 'local'
+      authProvider: 'local', 
     });
 
-    // Save the new user
     const saveResponse = await newUser.save();
     if(!saveResponse){
       console.log('error in saveRespone ')
@@ -195,7 +183,6 @@ app.post('/api/users/register', async (req: Request, res: Response) => {
       throw new Error('JWT_SECRET is not defined in environment variables');
     }
     
-    // Generate JWT token
     const token = jwt.sign(
       { 
         userId: newUser._id, 
@@ -307,7 +294,6 @@ app.post('/api/user/google-signup', async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    // Create a new user account
     user = new User({
       name,
       email,
