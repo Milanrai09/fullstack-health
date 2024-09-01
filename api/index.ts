@@ -10,7 +10,7 @@ const port = process.env.PORT
 app.use(bodyParser.json());
 app.use(cors());
 import { Request, Response } from 'express';
-import mongdbConnection from './databaseconfig';
+import dbConnect from './databaseconfig';
 import User from './src/model/userModal';
 import Articles from './src/model/articleModel'
 import bcrypt from 'bcrypt';
@@ -66,7 +66,7 @@ app.use(cookieParser());
 
 const secretkey = process.env.JWT_SECRET
 
-mongdbConnection();
+dbConnect();
 console.log(port)
 // Define the shape of your food details data
 interface FoodDetails {
