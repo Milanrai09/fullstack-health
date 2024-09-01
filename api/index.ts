@@ -65,7 +65,6 @@ app.get('/',async(req, res) => {
      try {
     await dbConnect();
     res.json({ success: true, data: "Your data here" });
-       res.send('hello world')
   } catch (error) {
     console.error('Database operation error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
