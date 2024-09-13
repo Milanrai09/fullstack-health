@@ -407,7 +407,7 @@ app.post('/api/save',async(req,res)=> {
 })
 
 
-
+connectDB().then(() => {
 
 app.get('/article/getAllArticle', async(req,res) => {
   try{
@@ -423,6 +423,8 @@ app.get('/article/getAllArticle', async(req,res) => {
     res.status(500).json({ error: 'Server error' });
   }
 })
+});
+
 app.post('/api/article/create',tokenMiddleware, async (req: Request, res: Response) => {
   const { title, category, content, userId } = req.body;
 
