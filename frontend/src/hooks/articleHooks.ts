@@ -17,6 +17,10 @@ interface Article {
   category: string;
 }
 
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; 
+
 const BASE_URL = `https://fullstack-health-backend.vercel.app`
 
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
@@ -45,15 +49,22 @@ api.interceptors.response.use(
   }
 );
 
-export const getAllArticles = async (): Promise<any[]> => {
+
+export const getAllArticles = async (retryCount = 0): Promise<any[]> => {
   try {
     const response = await api.get('/article/getAllArticle');
-    return response.data; 
+    return response.data;
   } catch (error) {
+    if (retryCount < MAX_RETRIES) {
+      console.log(`Retrying getAllArticles (${retryCount + 1}/${MAX_RETRIES})...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return getAllArticles(retryCount + 1);
+    }
     console.error(error);
     throw error;
   }
 };
+
 
 export const createArticle = async (article: any): Promise<ApiResponse<any>> => {
   try {
