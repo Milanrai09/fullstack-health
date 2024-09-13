@@ -28,9 +28,10 @@ const PopularDietArticles: React.FC = () => {
   const userId = healthToken?.userId;
 
   useEffect(() => {
-    setIsLoading(true);
-    getAllArticles()
-      .then((data: Article[]) => {
+    const fetchArticles = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getAllArticles();
         const popularDietArticles = data
           .filter(article => 
             article.status === 'approved' && 
@@ -39,13 +40,15 @@ const PopularDietArticles: React.FC = () => {
           .sort((a, b) => b.likesCount - a.likesCount);
         
         setArticles(popularDietArticles);
-        setIsLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching articles:', error);
         setError('Failed to fetch articles. Please try again later.');
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchArticles();
   }, []);
 
   const handleLike = async (articleId: string) => {
@@ -89,12 +92,12 @@ const PopularDietArticles: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading articles...</div>;
+if (isLoading) {
+    return <div>Loading articles... Please wait.</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error} <button onClick={() => window.location.reload()}>Retry</button></div>;
   }
 
   return (
