@@ -1,13 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosInstance } from 'axios';
-import apiClient from "../apiClient";
 
 export interface ApiResponse<T> {
   data: T;
   error?: string;
 }
-
-
 
 interface UserInfo {
   _id: string;
@@ -25,7 +22,6 @@ interface RegisterData {
   username: string;
 }
 
-
 interface GoogleRegisterData {
   token: string;
   username: string;
@@ -41,25 +37,21 @@ interface GoogleRegisterResponse {
   };
 }
 
-const BASE_URL = `https://fullstack-health-backend.vercel.app`
-
+const BASE_URL = `https://fullstack-health-backend.vercel.app`;
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
 export const useGetAllUsers = async (): Promise<UserInfo[]> => {
-  try {  
-    
-  const healthToken = localStorage.getItem('healthToken');
-  const token = healthToken ? JSON.parse(healthToken).token : null;
-
-  if (!token) {
-    throw new Error('Token not found');
-  }
+  try {
+    const healthToken = localStorage.getItem('healthToken');
+    const token = healthToken ? JSON.parse(healthToken).token : null;
+    if (!token) {
+      throw new Error('Token not found');
+    }
     const response = await api.get<UserInfo[]>('/api/users/getAllUser', {
       headers: {
         Authorization: `Bearer ${token}`,
       }
     });
-
     return response.data;
   } catch (error) {
     console.error(error);
@@ -82,32 +74,34 @@ export const getNeutritionalInfo = async (search: string): Promise<{ data: any }
   }
 };
 
-
 export const useLoginMutation = () =>
   useMutation<{ userData: UserInfo }, Error, { email: string; password: string }>({
     mutationFn: async ({ email, password }) => {
-      const response = await apiClient.post<{ userData: UserInfo }>(`/api/user/login`, { email, password }, { withCredentials: true });
+      const response = await axios.post<{ userData: UserInfo }>(
+        `${BASE_URL}/api/user/login`,
+        { email, password },
+        { withCredentials: true }
+      );
       return response.data;
     },
   });
-  
-  export const useRegisterMutation = () => {
-    return useMutation<{ redirectUrl: string; userData: any }, Error, RegisterData>({
-      mutationFn: async (registerData: RegisterData) => {
-        try {
-          const response = await api.post<{ redirectUrl: string; userData: any }>(
-            '/api/users/register', 
-            registerData
-          );
-          return response.data;
-        } catch (error) {
-          console.error('Registration error:', error);
-          throw error;
-        }
-      },
-    });
-  };
 
+export const useRegisterMutation = () => {
+  return useMutation<{ redirectUrl: string; userData: any }, Error, RegisterData>({
+    mutationFn: async (registerData: RegisterData) => {
+      try {
+        const response = await api.post<{ redirectUrl: string; userData: any }>(
+          '/api/users/register', 
+          registerData
+        );
+        return response.data;
+      } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+      }
+    },
+  });
+};
 
 export const useGoogleRegisterMutation = () => {
   return useMutation<GoogleRegisterResponse, Error, GoogleRegisterData>({
@@ -119,7 +113,6 @@ export const useGoogleRegisterMutation = () => {
         });
         console.log('Status:', response.status);
         console.log('UserData:', response.data);
-
         const userdata = {
           isAdmin: response.data.userData.isAdmin,
           userId: response.data.userData.userId,
@@ -127,7 +120,6 @@ export const useGoogleRegisterMutation = () => {
           token: response.data.userData.token,
         };
         localStorage.setItem('healthToken', JSON.stringify(userdata));
-
         return response.data;
       } catch (error) {
         console.error('Google register error:', error);
