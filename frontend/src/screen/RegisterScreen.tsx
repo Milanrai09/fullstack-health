@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-
-const API_BASE_URL = 'http://localhost:9000'; // Adjust this to your backend URL
+import { useRegisterMutation } from './hooks/userHooks'; // Using the register hook
 
 interface RegisterData {
   name: string;
@@ -26,108 +24,41 @@ const RegisterScreen: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const registerUser = async (data: RegisterData) => {
-    console.log('registerUser function called with data:', data);
-    try {
-      console.log('Fetching from:', `${API_BASE_URL}/api/users/register`);
-      const response = await fetch(`${API_BASE_URL}/api/users/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      
-      });
-      console.log('Fetch response:', response);
-  
-      if (!response.ok) {
-        console.log('Response not OK, status:', response.status);
-        const errorData = await response.json();
-        console.log('Error data:', errorData);
-        throw new Error(errorData.error || 'Registration failed');
-      }
-  
-      const result = await response.json();
-      console.log('Registration successful, result:', result);
-      return result;
-    } catch (error) {
-      console.error('Fetch error:', error);
-      throw error;
-    }
-  };
-  const googleRegister = async (data: GoogleRegisterData) => {
-    const response = await fetch(`${API_BASE_URL}/api/users/google-register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      credentials: 'include',
-    });
+  // Use the custom hook for registering users
+  const registerMutation = useRegisterMutation();
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Google registration failed');
-    }
-
-    return response.json();
-  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    console.log('Form submitted');
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Password length:', password.length);
-    console.log('Confirm Password length:', confirmPassword.length);
-  
     if (!name || !email || !password || !confirmPassword) {
-      console.log('Validation failed: All fields are required');
       setError('All fields are required');
       return;
     }
     if (password !== confirmPassword) {
-      console.log('Validation failed: Passwords do not match');
       setError('Passwords do not match');
       return;
     }
-  
-    console.log('Validation passed, attempting to register user');
+
     setIsLoading(true);
     try {
-      console.log('Calling registerUser function');
-      const result = await registerUser({ name, email, password });
-      console.log('Registration result:', result);
-      console.log('User data:', result.userData);
-  
-      console.log('Storing token in localStorage');
+      const result = await registerMutation.mutateAsync({ name, email, password });
       localStorage.setItem('healthToken', JSON.stringify(result.userData));
-      
-      console.log('Navigating to home page');
+
       navigate('/', { replace: true });
-      
       window.location.reload();
-      
-      console.log('Showing success toast');
       toast.success('Registration successful');
     } catch (error) {
-      console.error('Error during registration:', error);
       if (error instanceof Error) {
-        console.log('Error is instance of Error');
-        console.log('Error message:', error.message);
         setError(error.message);
-        console.log('hello from the error instead of error');
       } else {
-        console.log('Error is not instance of Error');
         setError('An unexpected error occurred');
       }
-      console.log('Showing error toast');
       toast.error('Registration failed');
     } finally {
-      console.log('Setting isLoading to false');
       setIsLoading(false);
     }
   };
+
   const handleGoogleLogin = async (response: CredentialResponse) => {
     if (!response.credential) {
       toast.error('Google login failed');
@@ -145,7 +76,6 @@ const RegisterScreen: React.FC = () => {
         toast.success('Google registration successful');
       }
     } catch (error) {
-      console.error('Error during Google registration:', error);
       toast.error('Google registration failed');
     } finally {
       setIsLoading(false);
