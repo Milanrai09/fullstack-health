@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { useRegisterMutation } from './hooks/userHooks'; // Using the register hook
+import { useRegisterMutation } from '../hooks/userHooks'; // Using the register hook
 
 interface RegisterData {
   name: string;
