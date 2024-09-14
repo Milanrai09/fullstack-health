@@ -4,6 +4,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useRegisterMutation, useGoogleRegisterMutation } from '../hooks/userHooks';
 
+// Define the RegisterData type
+type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+  credential?: string;
+  username?: string;
+};
+
 const RegisterScreen: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -30,9 +39,9 @@ const RegisterScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const result = await registerMutation.mutateAsync({ name, email, password });
+      const registerData: RegisterData = { name, email, password };
+      const result = await registerMutation.mutateAsync(registerData);
       localStorage.setItem('healthToken', JSON.stringify(result.userData));
-
       navigate('/', { replace: true });
       window.location.reload();
       toast.success('Registration successful');
@@ -53,7 +62,7 @@ const RegisterScreen: React.FC = () => {
     setIsLoading(true);
     try {
       const result = await googleRegisterMutation.mutateAsync({
-        token: response.credential,
+        credential: response.credential,
         username: name,
       });
       if (result && result.userData) {
