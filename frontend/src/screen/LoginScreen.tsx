@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useGoogleRegisterMutation, useLoginMutation } from '../hooks/userHooks';
 import { toast } from 'react-toastify';
-import {useRegisterMutation} from '../hooks/userHooks';
+import {useLoginMutation} from '../hooks/userHooks';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
