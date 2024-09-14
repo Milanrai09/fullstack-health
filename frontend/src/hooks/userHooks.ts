@@ -97,8 +97,7 @@ export const useLoginMutation = () =>
         try {
           const response = await api.post<{ redirectUrl: string; userData: any }>(
             '/api/users/register', 
-            registerData,
-            { withCredentials: true }
+            registerData
           );
           return response.data;
         } catch (error) {
