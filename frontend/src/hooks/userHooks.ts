@@ -79,8 +79,7 @@ export const useLoginMutation = () =>
     mutationFn: async ({ email, password }) => {
       const response = await axios.post<{ userData: UserInfo }>(
         `${BASE_URL}/api/user/login`,
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
       return response.data;
     },
