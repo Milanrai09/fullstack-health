@@ -974,19 +974,3 @@ app.get('/api/nutrition/:search', async (req: Request, res: Response) => {
 
 
 
-
-
-
-// app.post('/api/chat', async (req, res) => {
-//   const { messages } = req.body;
-
-//   try {
-//     const response = await fetchChatGPTResponse(messages);
-//     console.log('message:', response)
-//     res.json({ response });
-//   } catch (error) {
-//     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-//     res.status(500).json({ error: errorMessage });
-//   }
-// });
-
