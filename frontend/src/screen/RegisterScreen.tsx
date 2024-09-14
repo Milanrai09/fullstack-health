@@ -2,18 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { useRegisterMutation } from '../hooks/userHooks'; // Using the register hook
-
-interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-}
-
-interface GoogleRegisterData {
-  token: string;
-  username: string;
-}
+import { useRegisterMutation, useGoogleRegisterMutation } from '../hooks/userHooks';
 
 const RegisterScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -24,8 +13,8 @@ const RegisterScreen: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Use the custom hook for registering users
   const registerMutation = useRegisterMutation();
+  const googleRegisterMutation = useGoogleRegisterMutation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,11 +37,7 @@ const RegisterScreen: React.FC = () => {
       window.location.reload();
       toast.success('Registration successful');
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
       toast.error('Registration failed');
     } finally {
       setIsLoading(false);
@@ -67,9 +52,9 @@ const RegisterScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const result = await googleRegister({
+      const result = await googleRegisterMutation.mutateAsync({
         token: response.credential,
-        username: name
+        username: name,
       });
       if (result && result.userData) {
         navigate('/', { replace: true });
@@ -88,33 +73,13 @@ const RegisterScreen: React.FC = () => {
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setError(''); }}
-          required
-        />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => { setEmail(e.target.value); setError(''); }}
-          required
-        />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => { setPassword(e.target.value); setError(''); }}
-          required
-        />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <label>Confirm Password:</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
-          required
-        />
+        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Registering...' : 'Register'}
         </button>
@@ -123,10 +88,7 @@ const RegisterScreen: React.FC = () => {
         <span>or</span>
       </div>
       <div className="googleOauth">
-        <GoogleLogin
-          onSuccess={handleGoogleLogin}
-          onError={() => toast.error('Google login failed')}
-        />
+        <GoogleLogin onSuccess={handleGoogleLogin} onError={() => toast.error('Google login failed')} />
       </div>
       <p>
         Already have an account? <Link to="/login">Login here</Link>
