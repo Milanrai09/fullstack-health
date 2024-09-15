@@ -272,8 +272,7 @@ app.put('/api/admin/demote/:id',tokenMiddleware,isAdminMiddleware, async (req, r
   }
 });
 
-
-app.post('/api/user/google-signup', async (req: Request, res: Response) => {
+app.post('/api/user/google-auth', async (req: Request, res: Response) => {
   const { token, username } = req.body;
 
   try {
@@ -294,20 +293,26 @@ app.post('/api/user/google-signup', async (req: Request, res: Response) => {
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
     
     if (user) {
-      return res.status(409).json({ error: 'User already exists' });
+      // User exists, update their information
+      user.name = name;
+      user.picture = picture;
+      user.lastLogin = new Date();
+      await user.save();
+    } else {
+      // Create a new user
+      user = new User({
+        name,
+        email,
+        googleId,
+        picture,
+        username,
+        authProvider: 'google',
+        isAdmin: false,
+        isSuperAdmin: false,
+        lastLogin: new Date(),
+      });
+      await user.save();
     }
-
-    user = new User({
-      name,
-      email,
-      googleId,
-      picture,
-      username,
-      authProvider: 'google',
-      isAdmin: false,
-      isSuperAdmin: false,
-    });
-    await user.save();
 
     // Generate JWT token
     if (!process.env.JWT_SECRET) {
@@ -331,13 +336,15 @@ app.post('/api/user/google-signup', async (req: Request, res: Response) => {
     // Set token as HTTP cookie
     res.cookie('token', jwtToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
-    return res.status(201).json({ message: 'Registered successfully', userData });
+    return res.status(200).json({ 
+      message: user ? 'Logged in successfully' : 'Registered successfully', 
+      userData 
+    });
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('Error authenticating user:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 app.post('/api/user/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
