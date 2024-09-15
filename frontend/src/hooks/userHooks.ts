@@ -110,14 +110,13 @@ export const useRegisterMutation = () => {
     },
   });
 };
-
-export const useGoogleRegisterMutation = () => {
-  return useMutation<GoogleRegisterResponse, Error, GoogleRegisterData>({
-    mutationFn: async (googleRegisterData: GoogleRegisterData) => {
+export const useGoogleAuthMutation = () => {
+  return useMutation<GoogleAuthResponse, Error, GoogleAuthData>({
+    mutationFn: async (googleAuthData: GoogleAuthData) => {
       try {
-        const response = await api.post<GoogleRegisterResponse>('/api/user/google-signup', {
-          token: googleRegisterData.token,
-          username: googleRegisterData.username,
+        const response = await axios.post<GoogleAuthResponse>('/api/user/google-auth', {
+          token: googleAuthData.token,
+          username: googleAuthData.username,
         });
         console.log('Status:', response.status);
         console.log('UserData:', response.data);
@@ -130,9 +129,9 @@ export const useGoogleRegisterMutation = () => {
         localStorage.setItem('healthToken', JSON.stringify(userdata));
         return response.data;
       } catch (error) {
-        console.error('Google register error:', error);
+        console.error('Google authentication error:', error);
         if (axios.isAxiosError(error) && error.response) {
-          throw new Error(error.response.data.error || 'An error occurred during registration');
+          throw new Error(error.response.data.error || 'An error occurred during authentication');
         }
         throw error;
       }
