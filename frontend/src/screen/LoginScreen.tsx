@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { useGoogleRegisterMutation, useLoginMutation } from '../hooks/userHooks';
+import { useGoogleAuthMutation } from '../hooks/userHooks';
 import { toast } from 'react-toastify';
 
 const LoginScreen: React.FC = () => {
@@ -15,8 +15,7 @@ const LoginScreen: React.FC = () => {
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
 
-  const googleRegisterMutation = useGoogleRegisterMutation();
-  const loginMutation = useLoginMutation();
+  const googleRegisterMutation = useGoogleAuthMutation();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
