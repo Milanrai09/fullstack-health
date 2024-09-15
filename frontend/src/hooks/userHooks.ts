@@ -1,6 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosInstance } from 'axios';
 
+interface GoogleAuthData {
+  token: string;
+  username?: string;
+}
+
+interface GoogleAuthResponse {
+  message: string;
+  userData: {
+    userId: string;
+    isAdmin: boolean;
+    isSuperAdmin: boolean;
+    token: string;
+  };
+}
 export interface ApiResponse<T> {
   data: T;
   error?: string;
