@@ -36,21 +36,6 @@ interface RegisterData {
   username: string;
 }
 
-interface GoogleRegisterData {
-  token: string;
-  username: string;
-}
-
-interface GoogleRegisterResponse {
-  message: string;
-  userData: {
-    userId: string;
-    isAdmin: boolean;
-    isSuperAdmin: boolean;
-    token: string;
-  };
-}
-
 const BASE_URL = `https://fullstack-health-backend.vercel.app`;
 const api: AxiosInstance = axios.create({ baseURL: BASE_URL });
 
