@@ -7,7 +7,11 @@ interface RegisterData {
   name: string;
   email: string;
   password: string;
-  googleToken?: string;
+}
+
+interface GoogleAuthData {
+  token: string;
+  username?: string;
 }
 
 const RegisterScreen: React.FC = () => {
@@ -63,9 +67,12 @@ const RegisterScreen: React.FC = () => {
     try {
       // In a real scenario, you would obtain the Google token here
       // For this example, we'll use a placeholder
-      const googleToken = "placeholder_google_token";
+      const googleAuthData: GoogleAuthData = {
+        token: "placeholder_google_token",
+        username: formData.name || formData.email.split('@')[0],
+      };
       
-      const result = await googleAuthMutation.mutateAsync({ googleToken });
+      const result = await googleAuthMutation.mutateAsync(googleAuthData);
       handleAuthSuccess(result);
     } catch (error) {
       handleAuthError(error);
@@ -100,15 +107,15 @@ const RegisterScreen: React.FC = () => {
         <label htmlFor="confirmPassword">Confirm Password:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
         
-        <button type="submit" disabled={registerMutation.isLoading}>
-          {registerMutation.isLoading ? 'Registering...' : 'Register'}
+        <button type="submit">
+          Register
         </button>
       </form>
       <div className="or-divider">
         <span>or</span>
       </div>
-      <button onClick={handleGoogleAuth} disabled={googleAuthMutation.isLoading}>
-        {googleAuthMutation.isLoading ? 'Authenticating...' : 'Register with Google'}
+      <button onClick={handleGoogleAuth}>
+        Register with Google
       </button>
       <p>
         Already have an account? <Link to="/login">Login here</Link>
