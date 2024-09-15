@@ -77,11 +77,20 @@ export const getNeutritionalInfo = async (search: string): Promise<{ data: any }
 export const useLoginMutation = () =>
   useMutation<{ userData: UserInfo }, Error, { email: string; password: string }>({
     mutationFn: async ({ email, password }) => {
-      const response = await axios.post<{ userData: UserInfo }>(
-        `${BASE_URL}/api/user/login`,
-        { email, password }
-      );
-      return response.data;
+      try {
+        const response = await axios.post<{ userData: UserInfo }>(
+          `${BASE_URL}/api/user/login`,
+          { email, password }
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          // Handle known error responses
+          throw new Error(error.response.data.error || 'An error occurred during login');
+        }
+        // Handle unexpected errors
+        throw new Error('An unexpected error occurred');
+      }
     },
   });
 
