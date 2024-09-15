@@ -7,6 +7,8 @@ interface RegisterData {
   name: string;
   email: string;
   password: string;
+  credential: string;
+  username: string;
 }
 
 interface GoogleAuthData {
@@ -21,6 +23,7 @@ const RegisterScreen: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    username: '',
   });
   const [error, setError] = useState('');
   
@@ -39,9 +42,9 @@ const RegisterScreen: React.FC = () => {
     e.preventDefault();
     setError('');
     
-    const { name, email, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword, username } = formData;
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword || !username) {
       setError('All fields are required');
       return;
     }
@@ -55,6 +58,8 @@ const RegisterScreen: React.FC = () => {
         name,
         email,
         password,
+        credential: password, // Using password as credential
+        username,
       };
       const result = await registerMutation.mutateAsync(registerData);
       handleAuthSuccess(result);
@@ -69,7 +74,7 @@ const RegisterScreen: React.FC = () => {
       // For this example, we'll use a placeholder
       const googleAuthData: GoogleAuthData = {
         token: "placeholder_google_token",
-        username: formData.name || formData.email.split('@')[0],
+        username: formData.username || formData.email.split('@')[0],
       };
       
       const result = await googleAuthMutation.mutateAsync(googleAuthData);
@@ -100,6 +105,9 @@ const RegisterScreen: React.FC = () => {
         
         <label htmlFor="email">Email:</label>
         <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+        
+        <label htmlFor="username">Username:</label>
+        <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} required />
         
         <label htmlFor="password">Password:</label>
         <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
