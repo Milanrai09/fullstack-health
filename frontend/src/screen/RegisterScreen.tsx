@@ -74,6 +74,8 @@ const RegisterScreen: React.FC = () => {
       if (result && result.userData) {
         localStorage.setItem('healthToken', JSON.stringify(result.userData));
         navigate('/', { replace: true });
+        window.location.reload();
+
         toast.success('Google registration successful');
       }
     } catch (error) {
