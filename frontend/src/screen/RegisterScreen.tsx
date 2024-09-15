@@ -1,33 +1,42 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { useRegisterMutation, useGoogleRegisterMutation } from '../hooks/userHooks';
+import { useRegisterMutation, useGoogleAuthMutation } from '../hooks/userHooks';
 
-// Use the RegisterData interface from your hooks file
 interface RegisterData {
   name: string;
   email: string;
   password: string;
-  credential: string;
-  username: string;
+  googleToken?: string;
 }
 
 const RegisterScreen: React.FC = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   
   const registerMutation = useRegisterMutation();
-  const googleRegisterMutation = useGoogleRegisterMutation();
+  const googleAuthMutation = useGoogleAuthMutation();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
     
+    const { name, email, password, confirmPassword } = formData;
+
     if (!name || !email || !password || !confirmPassword) {
       setError('All fields are required');
       return;
@@ -37,52 +46,41 @@ const RegisterScreen: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
       const registerData: RegisterData = {
         name,
         email,
         password,
-        credential: '', // Empty for regular registration
-        username: name, // Use name as username for regular registration
       };
       const result = await registerMutation.mutateAsync(registerData);
-      localStorage.setItem('healthToken', JSON.stringify(result.userData));
-      navigate('/', { replace: true });
-      window.location.reload();
-      toast.success('Registration successful');
+      handleAuthSuccess(result);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
-      toast.error('Registration failed');
-    } finally {
-      setIsLoading(false);
+      handleAuthError(error);
     }
   };
 
-  const handleGoogleLogin = async (response: CredentialResponse) => {
-    if (!response.credential) {
-      toast.error('Google login failed');
-      return;
-    }
-
-    setIsLoading(true);
+  const handleGoogleAuth = async () => {
     try {
-      const result = await googleRegisterMutation.mutateAsync({
-        token: response.credential,
-        username: name || email.split('@')[0], // Use name if available, otherwise use email username
-      });
-      if (result && result.userData) {
-        localStorage.setItem('healthToken', JSON.stringify(result.userData));
-        navigate('/', { replace: true });
-        window.location.reload();
-
-        toast.success('Google registration successful');
-      }
+      // In a real scenario, you would obtain the Google token here
+      // For this example, we'll use a placeholder
+      const googleToken = "placeholder_google_token";
+      
+      const result = await googleAuthMutation.mutateAsync({ googleToken });
+      handleAuthSuccess(result);
     } catch (error) {
-      toast.error('Google registration failed');
-    } finally {
-      setIsLoading(false);
+      handleAuthError(error);
     }
+  };
+
+  const handleAuthSuccess = (result: any) => {
+    localStorage.setItem('healthToken', JSON.stringify(result.userData));
+    navigate('/', { replace: true });
+    toast.success('Registration successful');
+  };
+
+  const handleAuthError = (error: any) => {
+    setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    toast.error('Registration failed');
   };
 
   return (
@@ -90,24 +88,28 @@ const RegisterScreen: React.FC = () => {
       <h2>Register</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <label>Name:</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <label>Confirm Password:</label>
-        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Registering...' : 'Register'}
+        <label htmlFor="name">Name:</label>
+        <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
+        
+        <label htmlFor="email">Email:</label>
+        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+        
+        <label htmlFor="password">Password:</label>
+        <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+        
+        <label htmlFor="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+        
+        <button type="submit" disabled={registerMutation.isLoading}>
+          {registerMutation.isLoading ? 'Registering...' : 'Register'}
         </button>
       </form>
       <div className="or-divider">
         <span>or</span>
       </div>
-      <div className="googleOauth">
-        <GoogleLogin onSuccess={handleGoogleLogin} onError={() => toast.error('Google login failed')} />
-      </div>
+      <button onClick={handleGoogleAuth} disabled={googleAuthMutation.isLoading}>
+        {googleAuthMutation.isLoading ? 'Authenticating...' : 'Register with Google'}
+      </button>
       <p>
         Already have an account? <Link to="/login">Login here</Link>
       </p>
