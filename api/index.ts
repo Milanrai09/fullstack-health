@@ -338,54 +338,56 @@ app.post('/api/user/google-signup', async (req: Request, res: Response) => {
   }
 });
 
-
 app.post('/api/user/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // Check if it's a local auth user
-    if (user.isLocalAuth()) {
+    if (user.isLocalAuth && user.isLocalAuth()) {
       if (!user.password) {
         return res.status(400).json({ error: 'Invalid authentication method' });
       }
-
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({ error: 'Invalid email or password' });
       }
     } else {
-      // For Google-authenticated users, we might want to handle this differently
       return res.status(400).json({ error: 'Please use Google Sign-In for this account' });
     }
 
-    if (!secretkey) {
-      throw new Error('Secret key is not defined');
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT secret is not defined');
     }
+
     const token = jwt.sign(
       { userId: user._id, isAdmin: user.isAdmin, isSuperAdmin: user.isSuperAdmin },
-      secretkey,
-      { expiresIn: '1h' }
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
-    const userData = {
+
+    const userData: UserInfo = {
       userId: user._id,
       isAdmin: user.isAdmin,
       isSuperAdmin: user.isSuperAdmin,
       token
-    }
+    };
 
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-    res.status(200).json({ message: 'Signed in successfully', userData });
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict'
+    });
+
+    // Changed to match the expected client-side type
+    res.status(200).json({ userData });
   } catch (error) {
     console.error('Error signing in', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 app.post('/api/save',async(req,res)=> {
   try{
     const{productId,userId} = req.body
