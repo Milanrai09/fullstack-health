@@ -87,8 +87,8 @@ const LoginScreen: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" disabled={loginMutation.isLoading}>
-          {loginMutation.isLoading ? 'Signing In...' : 'Sign In'}
+        <button type="submit">
+          Sign In
         </button>
         <div className="forgot-password" onClick={handleForgotPassword}>
           Forgot Password?
