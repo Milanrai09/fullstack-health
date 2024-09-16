@@ -68,32 +68,28 @@ const RegisterScreen: React.FC = () => {
     }
   };
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleLogin = async (response: any) => {
     try {
-      // In a real scenario, you would obtain the Google token here
-      // For this example, we'll use a placeholder
-      const googleAuthData: GoogleAuthData = {
-        token: "placeholder_google_token",
-        username: formData.username || formData.email.split('@')[0],
-      };
-      
-      const result = await googleAuthMutation.mutateAsync(googleAuthData);
-      handleAuthSuccess(result);
+      const result = await googleAuthMutation.mutateAsync({
+        token: response.credential,
+        username: '', // You might want to get this from the Google response
+      });
+      if (result && result.userData) {
+        localStorage.setItem('healthToken', JSON.stringify(result.userData));
+        navigate(redirect);
+        toast.success('Google login successful');
+      }
     } catch (error) {
-      handleAuthError(error);
+      console.error('Error during Google login:', error);
+      toast.error('Google login failed');
     }
   };
 
-  const handleAuthSuccess = (result: any) => {
-    localStorage.setItem('healthToken', JSON.stringify(result.userData));
-    navigate('/', { replace: true });
-    toast.success('Registration successful');
+  const handleGoogleError = () => {
+    console.log('Google login error');
+    toast.error('Google login failed');
   };
 
-  const handleAuthError = (error: any) => {
-    setError(error instanceof Error ? error.message : 'An unexpected error occurred');
-    toast.error('Registration failed');
-  };
 
   return (
     <div className="auth-container">
@@ -122,9 +118,9 @@ const RegisterScreen: React.FC = () => {
       <div className="or-divider">
         <span>or</span>
       </div>
-      <button onClick={handleGoogleAuth}>
-        Register with Google
-      </button>
+     <div className="googleOauth">
+        <GoogleLogin onSuccess={handleGoogleLogin} onError={handleGoogleError} />
+      </div>
       <p>
         Already have an account? <Link to="/login">Login here</Link>
       </p>
