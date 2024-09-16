@@ -113,7 +113,7 @@ export const useGoogleAuthMutation = () => {
   return useMutation<GoogleAuthResponse, Error, GoogleAuthData>({
     mutationFn: async (googleAuthData: GoogleAuthData) => {
       try {
-        const response = await axios.post<GoogleAuthResponse>('/api/user/google-auth', {
+        const response = await axios.post<GoogleAuthResponse>('/api/users/google-auth', {
           token: googleAuthData.token,
           username: googleAuthData.username,
         });
