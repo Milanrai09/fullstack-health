@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRegisterMutation, useGoogleAuthMutation } from '../hooks/userHooks';
+import { GoogleLogin } from '@react-oauth/google';
 
 interface RegisterData {
   name: string;
@@ -43,7 +44,6 @@ const RegisterScreen: React.FC = () => {
     setError('');
     
     const { name, email, password, confirmPassword, username } = formData;
-
     if (!name || !email || !password || !confirmPassword || !username) {
       setError('All fields are required');
       return;
@@ -52,13 +52,12 @@ const RegisterScreen: React.FC = () => {
       setError('Passwords do not match');
       return;
     }
-
     try {
       const registerData: RegisterData = {
         name,
         email,
         password,
-        credential: password, // Using password as credential
+        credential: password,
         username,
       };
       const result = await registerMutation.mutateAsync(registerData);
@@ -72,11 +71,11 @@ const RegisterScreen: React.FC = () => {
     try {
       const result = await googleAuthMutation.mutateAsync({
         token: response.credential,
-        username: '', // You might want to get this from the Google response
+        username: '',
       });
       if (result && result.userData) {
         localStorage.setItem('healthToken', JSON.stringify(result.userData));
-        navigate(redirect);
+        navigate('/'); // Redirect to home page or dashboard
         toast.success('Google login successful');
       }
     } catch (error) {
@@ -90,6 +89,19 @@ const RegisterScreen: React.FC = () => {
     toast.error('Google login failed');
   };
 
+  const handleAuthSuccess = (result: any) => {
+    if (result && result.userData) {
+      localStorage.setItem('healthToken', JSON.stringify(result.userData));
+      navigate('/'); // Redirect to home page or dashboard
+      toast.success('Registration successful');
+    }
+  };
+
+  const handleAuthError = (error: any) => {
+    console.error('Error during registration:', error);
+    setError('Registration failed. Please try again.');
+    toast.error('Registration failed');
+  };
 
   return (
     <div className="auth-container">
@@ -118,7 +130,7 @@ const RegisterScreen: React.FC = () => {
       <div className="or-divider">
         <span>or</span>
       </div>
-     <div className="googleOauth">
+      <div className="googleOauth">
         <GoogleLogin onSuccess={handleGoogleLogin} onError={handleGoogleError} />
       </div>
       <p>
