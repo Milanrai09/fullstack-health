@@ -31,6 +31,7 @@ const LoginScreen: React.FC = () => {
       if (result && result.userData) {
         localStorage.setItem('healthToken', JSON.stringify(result.userData));
         navigate(redirect);
+        window.location.reload();
         toast.success('Login successful');
       }
     } catch (err: any) {
@@ -48,6 +49,7 @@ const LoginScreen: React.FC = () => {
       if (result && result.userData) {
         localStorage.setItem('healthToken', JSON.stringify(result.userData));
         navigate(redirect);
+        window.location.reload();
         toast.success('Google login successful');
       }
     } catch (error) {
