@@ -12,10 +12,6 @@ interface RegisterData {
   username: string;
 }
 
-interface GoogleAuthData {
-  token: string;
-  username?: string;
-}
 
 const RegisterScreen: React.FC = () => {
   const navigate = useNavigate();
