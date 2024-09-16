@@ -71,7 +71,8 @@ const RegisterScreen: React.FC = () => {
       });
       if (result && result.userData) {
         localStorage.setItem('healthToken', JSON.stringify(result.userData));
-        navigate('/'); // Redirect to home page or dashboard
+        navigate('/');
+        window.location.reload();// Redirect to home page or dashboard
         toast.success('Google login successful');
       }
     } catch (error) {
@@ -88,7 +89,8 @@ const RegisterScreen: React.FC = () => {
   const handleAuthSuccess = (result: any) => {
     if (result && result.userData) {
       localStorage.setItem('healthToken', JSON.stringify(result.userData));
-      navigate('/'); // Redirect to home page or dashboard
+      navigate('/'); 
+      window.location.reload();// Redirect to home page or dashboard
       toast.success('Registration successful');
     }
   };
