@@ -272,7 +272,7 @@ app.put('/api/admin/demote/:id',tokenMiddleware,isAdminMiddleware, async (req, r
   }
 });
 
-app.post('/api/user/google-auth', async (req: Request, res: Response) => {
+app.post('/api/users/google-auth', async (req: Request, res: Response) => {
   const { token, username } = req.body;
 
   try {
