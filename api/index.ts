@@ -81,77 +81,77 @@ app.get('/',async(req, res) => {
 
 
 
-  app.post('/api/user/google-signup', async (req: Request, res: Response) => {
-    const { token } = req.body;
-    console.log('hello',token)
-    try {
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
+  // app.post('/api/user/google-signup', async (req: Request, res: Response) => {
+  //   const { token } = req.body;
+  //   console.log('hello',token)
+  //   try {
+  //     const ticket = await client.verifyIdToken({
+  //       idToken: token,
+  //       audience: process.env.GOOGLE_CLIENT_ID,
+  //     });
   
-      const payload = ticket.getPayload();
-      if (!payload) {
-        return res.status(400).json({ error: 'Invalid token' });
-      }
+  //     const payload = ticket.getPayload();
+  //     if (!payload) {
+  //       return res.status(400).json({ error: 'Invalid token' });
+  //     }
   
-      const { sub: googleId, email, name, picture } = payload;
+  //     const { sub: googleId, email, name, picture } = payload;
   
-      let user = await User.findOne({ $or: [{ googleId }, { email }] });
+  //     let user = await User.findOne({ $or: [{ googleId }, { email }] });
   
-      if (user) {
-        if (!user.googleId) {
-          user.googleId = googleId;
-          user.authProvider = 'google';
-          await user.save();
-          return res.status(409).json({message:'user already exist'})
+  //     if (user) {
+  //       if (!user.googleId) {
+  //         user.googleId = googleId;
+  //         user.authProvider = 'google';
+  //         await user.save();
+  //         return res.status(409).json({message:'user already exist'})
 
-        }else{
-          console.log('user already exist')
-          return res.status(409).json({message:'user already exist'})
-        }
-      } else {
-        user = new User({
-          name,
-          email,
-          googleId,
-          picture,
-          authProvider: 'google',
-          isAdmin: false,
-          isSuperAdmin: false,
-        });
-        await user.save();
-      }
+  //       }else{
+  //         console.log('user already exist')
+  //         return res.status(409).json({message:'user already exist'})
+  //       }
+  //     } else {
+  //       user = new User({
+  //         name,
+  //         email,
+  //         googleId,
+  //         picture,
+  //         authProvider: 'google',
+  //         isAdmin: false,
+  //         isSuperAdmin: false,
+  //       });
+  //       await user.save();
+  //     }
   
-      if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET is not defined in environment variables');
-      }
+  //     if (!process.env.JWT_SECRET) {
+  //       throw new Error('JWT_SECRET is not defined in environment variables');
+  //     }
   
-      const jwtToken = jwt.sign(
-        { 
-          userId: user._id, 
-          isAdmin: user.isAdmin, 
-          isSuperAdmin: user.isSuperAdmin 
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
+  //     const jwtToken = jwt.sign(
+  //       { 
+  //         userId: user._id, 
+  //         isAdmin: user.isAdmin, 
+  //         isSuperAdmin: user.isSuperAdmin 
+  //       },
+  //       process.env.JWT_SECRET,
+  //       { expiresIn: '1h' }
+  //     );
   
-      const userData = {
-        userId: user._id,
-        isAdmin: user.isAdmin,
-        isSuperAdmin: user.isSuperAdmin,
-        token: jwtToken,
-      };
+  //     const userData = {
+  //       userId: user._id,
+  //       isAdmin: user.isAdmin,
+  //       isSuperAdmin: user.isSuperAdmin,
+  //       token: jwtToken,
+  //     };
   
-      res.cookie('token', jwtToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+  //     res.cookie('token', jwtToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
   
-      return res.status(200).json({ message: 'Google sign-up successful', userData });
-    } catch (error) {
-      console.error('Error in Google sign-up:', error);
-      return res.status(500).json({ error: 'Server error during Google sign-up' });
-    }
-  });
+  //     return res.status(200).json({ message: 'Google sign-up successful', userData });
+  //   } catch (error) {
+  //     console.error('Error in Google sign-up:', error);
+  //     return res.status(500).json({ error: 'Server error during Google sign-up' });
+  //   }
+  // });
 
 
 
