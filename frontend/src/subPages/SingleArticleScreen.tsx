@@ -74,18 +74,59 @@ const SingleArticleScreen: React.FC = () => {
   if (!article) return <div>Article not found</div>;
 
   return (
-      <div className="full-article">
-          <h1 className="article-title">{article.title}</h1>
-          <div className="article-metadata">
-            <p className="author-info">By: {article.authorName} ({article.authorEmail})</p>
-            <p className="category">Category: {location.pathname.split('/')[2]}</p>
+    <div className="single-article-screen">
+      <div className="container">
+        {isLoading ? (
+          <div className="loading-skeleton">
+            <div className="skeleton skeleton-title"></div>
+            <div className="skeleton skeleton-meta"></div>
+            <div className="skeleton skeleton-content"></div>
+            <div className="skeleton skeleton-action"></div>
           </div>
-          <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
-          <div className="article-actions">
-            <button className="like-btn" onClick={() => handleLike(article._id)}>Like ({article.likesCount})</button>
-            <button className="dislike-btn" onClick={() => handleDislike(article._id)}>Dislike ({article.dislikesCount})</button>
-            <button className="save-btn" onClick={() => handleSave(article._id)}>Save</button>
+        ) : error ? (
+          <div className="error-container">
+            <h1 className="error-title">Error</h1>
+            <p className="error-message">{error}</p>
           </div>
+        ) : !article ? (
+          <div className="not-found-container">
+            <h1 className="not-found-title">Article not found</h1>
+            <p className="not-found-message">The article you're looking for doesn't exist or has been removed.</p>
+          </div>
+        ) : (
+          <article className="article-card">
+            <header className="article-header">
+              <h1 className="article-title">{article.title}</h1>
+              <div className="article-meta">
+                <img src={`https://api.dicebear.com/6.x/initials/svg?seed=${article.authorName}`} alt={article.authorName} className="author-avatar" />
+                <div className="author-info">
+                  <p className="author-name">{article.authorName}</p>
+                  <p className="author-email">{article.authorEmail}</p>
+                </div>
+              </div>
+              <div className="article-details">
+                <span>Published on {new Date(article.publishedDate).toLocaleDateString()}</span>
+                <span>{article.category}</span>
+              </div>
+            </header>
+            <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+            <footer className="article-footer">
+              <button className="action-button" onClick={() => handleLike(article._id)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                Like ({article.likesCount})
+              </button>
+              <button className="action-button" onClick={() => handleDislike(article._id)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                Dislike ({article.dislikesCount})
+              </button>
+              <button className="action-button" onClick={() => handleSave(article._id)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                Save
+              </button>
+            </footer>
+          </article>
+        )}
+      </div>
     </div>
   );
 };
